@@ -1,7 +1,6 @@
-package com.example.demo.board.model;
+package com.example.demo.reply.model;
 
-import com.example.demo.common.model.BaseEntity;
-import com.example.demo.reply.model.Reply;
+import com.example.demo.board.model.Board;
 import com.example.demo.user.model.User;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
@@ -9,29 +8,22 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
-import java.util.List;
-
 @Builder
 @Getter
 @AllArgsConstructor
 @NoArgsConstructor
 @Entity
-public class Board extends BaseEntity {
+public class Reply {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long idx;
-    private String title;
     private String contents;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name="user_idx")
     private User user;
 
-    @OneToMany(mappedBy = "board")
-    private List<Reply> replyList;
-
-    public void update(BoardDto.RegReq dto) {
-        this.title = dto.getTitle();
-        this.contents = dto.getContents();
-    }
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name="board_idx")
+    private Board board;
 }
