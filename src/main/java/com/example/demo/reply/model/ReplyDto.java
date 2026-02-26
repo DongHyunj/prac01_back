@@ -28,7 +28,7 @@ public class ReplyDto {
         private Long boardIdx;
         private Long userIdx;
 
-        public static ReplyDto.RegRes form(Reply entity) {
+        public static ReplyDto.RegRes from(Reply entity) {
             return RegRes.builder()
                     .idx(entity.getIdx())
                     .contents(entity.getContents())

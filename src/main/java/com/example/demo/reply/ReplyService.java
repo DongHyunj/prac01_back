@@ -14,6 +14,6 @@ public class ReplyService {
 
         reply = replyRepository.save(reply);
 
-        return ReplyDto.RegRes.form(reply);
+        return ReplyDto.RegRes.from(reply);
     }
 }
