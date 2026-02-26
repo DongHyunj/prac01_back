@@ -1,11 +1,13 @@
 package com.example.demo.upload;
 
+import com.example.demo.board.model.BoardDto;
 import com.example.demo.common.model.BaseResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestPart;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -25,5 +27,11 @@ public class UploadController {
     public ResponseEntity upload(List<MultipartFile> images) {
         List<String> result = uploadService.upload(images);
         return ResponseEntity.ok(BaseResponse.success(result));
+    }
+
+    // 게시글과 이미지를 동시에 업로드
+    @PostMapping("/imageWithDto")
+    public ResponseEntity upload(@RequestPart BoardDto.RegReq dto, @RequestPart List<MultipartFile> images) {
+        return ResponseEntity.ok("게시글과 이미지 동시에 업로드");
     }
 }
