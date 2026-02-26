@@ -1,12 +1,14 @@
 package com.example.demo.relation.model;
 
 import jakarta.persistence.*;
+import lombok.Builder;
 import lombok.Getter;
 
 import java.util.List;
 
 @Getter
 @Entity
+@Builder
 public class A {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

@@ -1,5 +1,7 @@
 package com.example.demo.relation.service;
 
+import com.example.demo.relation.model.A;
+import com.example.demo.relation.model.BDto;
 import com.example.demo.relation.repository.BRepository;
 import com.example.demo.relation.model.B;
 import lombok.RequiredArgsConstructor;
@@ -18,5 +20,13 @@ public class BService {
 
     public void readList() {
         List<B> b = bRespository.findAll();
+    }
+
+    public BDto.BRes req(Long aIdx, BDto.BReq dto) {
+        B b = dto.toEntity(aIdx);
+
+        b = bRespository.save(b);
+
+        return BDto.BRes.from(b);
     }
 }
