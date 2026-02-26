@@ -2,20 +2,23 @@ package com.example.demo.board.model;
 
 import com.example.demo.reply.model.Reply;
 import com.example.demo.reply.model.ReplyDto;
+import com.example.demo.user.model.User;
 import lombok.*;
 
 import java.util.List;
 
 public class BoardDto {
+
     @Getter
     public static class RegReq {
         private String title;
         private String contents;
 
-        public Board toEntity() {
+        public Board toEntity(Long userIdx) {
             return Board.builder()
                     .title(this.title)
                     .contents(this.contents)
+                    .user(User.builder().idx(userIdx).build())
                     .build();
         }
     }
@@ -26,12 +29,14 @@ public class BoardDto {
         private Long idx;
         private String title;
         private String contents;
+        private Long userIdx;
 
         public static RegRes from(Board entity) {
             return RegRes.builder()
                     .idx(entity.getIdx())
                     .title(entity.getTitle())
                     .contents(entity.getContents())
+                    .userIdx(entity.getUser().getIdx())
                     .build();
         }
     }

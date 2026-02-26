@@ -12,10 +12,11 @@ import java.util.List;
 public class BoardService {
     private final BoardRepository boardRepository;
 
-    public BoardDto.RegRes register(BoardDto.RegReq dto) {
-        Board entity = boardRepository.save(dto.toEntity());
+    public BoardDto.RegRes register(Long userIdx, BoardDto.RegReq dto) {
+        Board board = dto.toEntity(userIdx);
+        board = boardRepository.save(board);
 
-        return BoardDto.RegRes.from(entity);
+        return BoardDto.RegRes.from(board);
     }
 
     public List<BoardDto.ListRes> list() {
