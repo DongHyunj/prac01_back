@@ -1,6 +1,7 @@
 package com.example.demo.reply;
 
 
+import com.example.demo.common.model.BaseResponse;
 import com.example.demo.reply.model.ReplyDto;
 import com.example.demo.user.model.AuthUserDetails;
 import lombok.RequiredArgsConstructor;
@@ -14,10 +15,10 @@ import org.springframework.web.bind.annotation.*;
 public class ReplyController {
     private final ReplyService replyService;
 
-    @PostMapping("/reg{boardIdx}")
+    @PostMapping("/reg/{boardIdx}")
     public ResponseEntity reg(@AuthenticationPrincipal AuthUserDetails user, @PathVariable Long boardIdx, @RequestBody ReplyDto.RegReq dto) {
-        replyService.reg(dto);
+        ReplyDto.RegRes result = replyService.reg(user.getIdx(), boardIdx, dto);
 
-        return ResponseEntity.ok("댓글 작성 성공");
+        return ResponseEntity.ok(BaseResponse.success(result));
     }
 }
