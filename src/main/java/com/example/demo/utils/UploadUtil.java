@@ -7,7 +7,7 @@ import java.io.File;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 
-@Component
+// @Component
 public class UploadUtil {
     @Value("${project.upload.path}")
     private String defaultUploadPath;
