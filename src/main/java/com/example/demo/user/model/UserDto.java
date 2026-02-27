@@ -1,5 +1,6 @@
 package com.example.demo.user.model;
 
+import jakarta.validation.constraints.Pattern;
 import lombok.Builder;
 import lombok.Getter;
 
@@ -7,8 +8,12 @@ public class UserDto {
 
     @Getter
     public static class SignupReq {
-        private String email;
+        @Pattern(message = "이메일 형식이 아닙니다.",regexp = "^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\\\\.[a-zA-Z]{2,}$")
+        private String email; // 이메일 형식으로만 저징되게 하고 싶음
+        private String title;
+        @Pattern(message = "한글과 공백만 입력 가능합니다.", regexp = "^[가-힣\\s]*$")
         private String name;
+        @Pattern(message = "비밀번호는 숫자,영문,특수문자( !@#$%^&*() )를 조합해 8~20자로 생성해주세요", regexp = "^(?=.*[a-zA-Z])(?=.*[!@#$%^&*()])(?=.*[0-9]).{8,20}$")
         private String password;
 
         public User toEntity() {
