@@ -3,6 +3,7 @@ package com.example.demo.board.model;
 import com.example.demo.reply.model.Reply;
 import com.example.demo.reply.model.ReplyDto;
 import com.example.demo.user.model.User;
+import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.*;
 
 import java.util.List;
@@ -11,6 +12,7 @@ public class BoardDto {
 
     @Getter
     public static class RegReq {
+        @Schema(description = "제목, 제목은 50글자까지만 입력 가능합니다.", required = true, example = "제목01")
         private String title;
         private String contents;
 
