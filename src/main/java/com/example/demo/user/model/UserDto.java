@@ -85,14 +85,19 @@ public class UserDto {
                 // 카카오 로그인
                 case "kakao":
                     String providerId = ((Long) attributes.get("id")).toString();
-                    email = providerId + "@kakao.social";
                     Map<String, Object> properties = (Map<String, Object>) attributes.get("properties");
+                    email = providerId + "@kakao.social";
                     name = (String) properties.get("nickname");
                     break;
                 // 구글 로그인
                 case "google":
                     email = (String) attributes.get("email");
                     name = (String) attributes.get("name");
+                    break;
+                case "naver":
+                    Map<String, Object> response = (Map<String, Object>) attributes.get("response");
+                    email = (String) response.get("email");
+                    name = (String) response.get("name");
                     break;
             }
 
