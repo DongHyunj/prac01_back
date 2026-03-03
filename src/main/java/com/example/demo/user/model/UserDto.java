@@ -4,11 +4,13 @@ import jakarta.validation.constraints.Pattern;
 import lombok.Builder;
 import lombok.Getter;
 
+import java.util.Map;
+
 public class UserDto {
 
     @Getter
     public static class SignupReq {
-        @Pattern(message = "이메일 형식이 아닙니다.",regexp = "^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\\\\.[a-zA-Z]{2,}$")
+        @Pattern(message = "이메일 형식이 아닙니다.", regexp = "^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\\\\.[a-zA-Z]{2,}$")
         private String email; // 이메일 형식으로만 저징되게 하고 싶음
         private String title;
         @Pattern(message = "한글과 공백만 입력 가능합니다.", regexp = "^[가-힣\\s]*$")
@@ -62,6 +64,59 @@ public class UserDto {
                     .idx(entity.getIdx())
                     .email(entity.getEmail())
                     .name(entity.getName())
+                    .build();
+        }
+    }
+
+    @Getter
+    @Builder
+    public static class OAuth {
+        private String email;
+        private String name;
+        private String provider;
+        private boolean enable;
+        private String role;
+
+        public static OAuth from(Map<String, Object> attributes, String provider) {
+            String email = null;
+            String name = null;
+
+            switch (provider) {
+                // 카카오 로그인
+                case "kakao":
+                    String providerId = ((Long) attributes.get("id")).toString();
+                    Map<String, Object> properties = (Map<String, Object>) attributes.get("properties");
+                    email = providerId + "@kakao.social";
+                    name = (String) properties.get("nickname");
+                    break;
+                // 구글 로그인
+                case "google":
+                    email = (String) attributes.get("email");
+                    name = (String) attributes.get("name");
+                    break;
+                case "naver":
+                    Map<String, Object> response = (Map<String, Object>) attributes.get("response");
+                    email = (String) response.get("email");
+                    name = (String) response.get("name");
+                    break;
+            }
+
+            return OAuth.builder()
+                    .email(email)
+                    .name(name)
+                    .provider(provider)
+                    .enable(true)
+                    .role("ROLE_USER")
+                    .build();
+        }
+
+        public User toEntity() {
+            return User.builder()
+                    .email(this.email)
+                    .name(this.name)
+                    .password(this.provider)
+                    .enable(this.enable)
+                    .role(this.role)
                     .build();
         }
     }
