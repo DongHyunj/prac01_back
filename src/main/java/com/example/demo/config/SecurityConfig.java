@@ -22,6 +22,7 @@ package com.example.demo.config;
 
 import com.example.demo.config.filter.JwtFilter;
 import com.example.demo.config.oauth2.OAuth2AuthenticationSuccessHandler;
+import com.example.demo.config.oauth2.OAuth2AuthorizationRequestRepository;
 import com.example.demo.user.OAuth2UserService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
@@ -31,6 +32,7 @@ import org.springframework.security.config.annotation.authentication.configurati
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
+import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.factory.PasswordEncoderFactories;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -49,12 +51,18 @@ public class SecurityConfig {
     private final JwtFilter jwtFilter;
     private final OAuth2UserService oAuth2UserService;
     private final OAuth2AuthenticationSuccessHandler oAuth2AuthenticationSuccessHandler;
+    private final OAuth2AuthorizationRequestRepository oAuth2AuthorizationRequestRepository;
 
     @Bean
     public SecurityFilterChain configure(HttpSecurity http) throws Exception {
+        http.sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS));
+
         http.oauth2Login(config -> {
+            config.authorizationEndpoint(
+                    endpoint -> endpoint.authorizationRequestRepository(oAuth2AuthorizationRequestRepository)
+            );
             config.userInfoEndpoint(
-                    enpoint -> enpoint.userService(oAuth2UserService)
+                    endpoint -> endpoint.userService(oAuth2UserService)
             );
             config.successHandler(oAuth2AuthenticationSuccessHandler);
         });
