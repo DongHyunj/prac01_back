@@ -4,6 +4,7 @@ import com.example.demo.common.model.BaseResponse;
 import com.example.demo.user.model.AuthUserDetails;
 import lombok.RequiredArgsConstructor;
 import com.example.demo.board.model.BoardDto;
+import org.springframework.data.domain.Page;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
@@ -25,8 +26,11 @@ public class BoardController {
 
 
     @GetMapping("/list")
-    public ResponseEntity list() {
-        List<BoardDto.ListRes> dto = boardService.list();
+    public ResponseEntity list(
+            @RequestParam(required = true, defaultValue = "0") int page,
+            @RequestParam(required = true, defaultValue = "10") int size
+    ) {
+        BoardDto.PageRes dto = boardService.list(page, size);
         return ResponseEntity.ok(BaseResponse.success(dto));
     }
 
