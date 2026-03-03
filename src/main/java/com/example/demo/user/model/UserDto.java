@@ -10,7 +10,7 @@ public class UserDto {
 
     @Getter
     public static class SignupReq {
-        @Pattern(message = "이메일 형식이 아닙니다.",regexp = "^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\\\\.[a-zA-Z]{2,}$")
+        @Pattern(message = "이메일 형식이 아닙니다.", regexp = "^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\\\\.[a-zA-Z]{2,}$")
         private String email; // 이메일 형식으로만 저징되게 하고 싶음
         private String title;
         @Pattern(message = "한글과 공백만 입력 가능합니다.", regexp = "^[가-힣\\s]*$")
@@ -78,11 +78,23 @@ public class UserDto {
         private String role;
 
         public static OAuth from(Map<String, Object> attributes, String provider) {
-            String providerId = ((Long)attributes.get("id")).toString();
+            String email = null;
+            String name = null;
 
-            String email = providerId + "@kakao.social";
-            Map properties = (Map) attributes.get("properties");
-            String name = (String) properties.get("nickname");
+            switch (provider) {
+                // 카카오 로그인
+                case "kakao":
+                    String providerId = ((Long) attributes.get("id")).toString();
+                    email = providerId + "@kakao.social";
+                    Map<String, Object> properties = (Map<String, Object>) attributes.get("properties");
+                    name = (String) properties.get("nickname");
+                    break;
+                // 구글 로그인
+                case "google":
+                    email = (String) attributes.get("email");
+                    name = (String) attributes.get("name");
+                    break;
+            }
 
             return OAuth.builder()
                     .email(email)

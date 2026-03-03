@@ -29,7 +29,7 @@ public class OAuth2UserService extends DefaultOAuth2UserService {
         OAuth2User oAuth2User = super.loadUser(userRequest);
 
         // 내 서비스의 DTO로 변환
-        UserDto.OAuth dto = UserDto.OAuth.from(oAuth2User.getAttributes(), "kakao");
+        UserDto.OAuth dto = UserDto.OAuth.from(oAuth2User.getAttributes(), provider);
 
         // DB에 회원이 있나 없나 확인
         Optional<User> result = userRepository.findByEmail(dto.getEmail());
