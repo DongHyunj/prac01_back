@@ -10,7 +10,6 @@ import org.springframework.security.oauth2.core.OAuth2AuthenticationException;
 import org.springframework.security.oauth2.core.user.OAuth2User;
 import org.springframework.stereotype.Service;
 
-import java.util.Map;
 import java.util.Optional;
 
 @Service
@@ -42,7 +41,6 @@ public class OAuth2UserService extends DefaultOAuth2UserService {
             User user = result.get();
             return AuthUserDetails.from(user);
         }
-
 
     }
 }

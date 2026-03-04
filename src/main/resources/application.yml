@@ -1,3 +1,5 @@
+
+
 jwt:
   secret: ${JWT_SECRET}
   expire: ${JWT_EXPIRE}
@@ -9,6 +11,15 @@ project:
     key: aesscretkey012345678901234567890
 
 spring:
+  datasource:
+    master:
+      username: ${MASTER_DB_USERNAME}
+      password: ${MASTER_DB_PASSWORD}
+      jdbc-url: ${MASTER_DB_URL}
+    slave:
+      username: ${SLAVE_DB_USERNAME}
+      password: ${SLAVE_DB_PASSWORD}
+      jdbc-url: ${SLAVE_DB_URL}
   security:
     oauth2:
       client:
@@ -49,6 +60,14 @@ spring:
     name: backend
   cloud:
     aws:
+
+  jpa:
+    database-platform: org.hibernate.dialect.MariaDBDialect
+    hibernate:
+      ddl-auto: update
+    properties:
+      hibernate:
+        format_sql: true
       credentials:
         access-key: ${AWS_ACCESS_KEY}
         secret-key: ${AWS_SECRET_KEY}
@@ -70,22 +89,11 @@ spring:
           auth: true
           timeout: 5000
 
-  datasource:
-    driver-class-name: org.mariadb.jdbc.Driver
-    url: ${DB_URL}
-    username: ${DB_USERNAME}
-    password: ${DB_PASSWORD}
-
-  jpa:
-    database-platform: org.hibernate.dialect.MariaDBDialect
-    hibernate:
-      ddl-auto: update
-    properties:
-      hibernate:
-        format_sql: true
 
 logging:
   level:
     com.example.demo: debug
     org.hibernate.SQL: debug
     org.hibernate.orm.jdbc.bind: trace
+server:
+  port: 8083

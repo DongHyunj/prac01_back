@@ -7,6 +7,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Slice;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
@@ -33,6 +34,7 @@ public class BoardService {
         return BoardDto.PageRes.from(boardList);
     }
 
+    @Transactional(readOnly = true)
     public BoardDto.ReadRes read(Long idx) {
         Board board = boardRepository.findById(idx).orElseThrow();
         return BoardDto.ReadRes.from(board);
