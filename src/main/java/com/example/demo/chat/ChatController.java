@@ -1,10 +1,14 @@
 package com.example.demo.chat;
 
+import lombok.RequiredArgsConstructor;
+import org.springframework.messaging.handler.annotation.DestinationVariable;
 import org.springframework.messaging.handler.annotation.MessageMapping;
 import org.springframework.messaging.handler.annotation.SendTo;
+import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.stereotype.Controller;
 
 @Controller
+@RequiredArgsConstructor
 public class ChatController {
 
     // WebSocketConfig 클래스에서 setApplicationDestinationPrefixes로 설정해둔 /app 뒤에 /test로 메시지를 보내면 해당 메서드를 실행해주겠다.
@@ -16,5 +20,13 @@ public class ChatController {
     public String test() {
         System.out.println("test");
         return "zzzz";
+    }
+
+    // 최종 형태
+    private final SimpMessagingTemplate simpMessagingTemplate;
+
+    @MessageMapping("/chat/{roomIdx}")
+    public void sendChatMessage(@DestinationVariable Long roomIdx, String message) {
+        simpMessagingTemplate.convertAndSend("/topic/" + roomIdx, message);
     }
 }
