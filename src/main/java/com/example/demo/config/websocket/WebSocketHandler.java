@@ -23,7 +23,14 @@ public class WebSocketHandler extends TextWebSocketHandler {
 
     @Override
     protected void handleTextMessage(WebSocketSession session, TextMessage message) throws Exception {
-        log.debug("메시지 전송 받음 : {}", message.toString() );
+        log.debug("메시지 전송 받음 : {}", message.toString());
+
+        for(WebSocketSession to : sessions) {
+            if(session.equals(to)) {
+                continue;
+            }
+            to.sendMessage(message);
+        }
     }
 
     @Override
