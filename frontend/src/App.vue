@@ -1,6 +1,7 @@
 <script setup>
 import axios from "axios";
 import {ref} from 'vue';
+import {Client} from "@stomp/stompjs";
 
 const message = ref('');
 const socket = ref(null);
@@ -10,12 +11,23 @@ const user = ref({
 })
 
 const connectWebSocketServer = () => {
-  const ws = new WebSocket("ws://localhost:5173/ws")
+  const ws = new Client(
+      {brokerUrl: "ws://localhost:5173/ws"}
+  )
   socket.value = ws;
 
-  ws.onmessage = (message) => {
-    console.log(message.data)
+  ws.connected = () => {
+    console.log("웹 소켓 연결 성공")
+
+    ws.subscribe('/topic/test', (message) => {
+      console.log(message);
+    })
   }
+
+  // 그냥 websocket으로 연결했을 대 메시지 받는 코드
+  // ws.onmessage = (message) => {
+  //   console.log(message.data)
+  // }
 }
 
 const sendMessage = () => {
