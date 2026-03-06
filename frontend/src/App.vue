@@ -12,17 +12,19 @@ const user = ref({
 
 const connectWebSocketServer = () => {
   const ws = new Client(
-      {brokerUrl: "ws://localhost:5173/ws"}
+      {brokerURL: "ws://localhost:5173/ws"}
   )
   socket.value = ws;
 
-  ws.connected = () => {
+  ws.onConnect = () => {
     console.log("웹 소켓 연결 성공")
 
     ws.subscribe('/topic/test', (message) => {
       console.log(message);
     })
   }
+
+  ws.activate()
 
   // 그냥 websocket으로 연결했을 대 메시지 받는 코드
   // ws.onmessage = (message) => {
@@ -31,7 +33,10 @@ const connectWebSocketServer = () => {
 }
 
 const sendMessage = () => {
-  socket.value.send(JSON.stringify(message.value))
+  socket.value.publish({
+    destination: '/app/test',
+    body: JSON.stringify(message.value)
+  })
 }
 
 const login = async () => {
