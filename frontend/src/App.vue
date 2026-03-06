@@ -4,9 +4,13 @@ import {ref} from 'vue';
 
 const message = ref('');
 const socket = ref(null);
+const user = ref({
+  email: '',
+  password: ''
+})
 
 const connectWebSocketServer = () => {
-  const ws = new WebSocket("ws://localhost:8080/ws")
+  const ws = new WebSocket("ws://localhost:5173/ws")
   socket.value = ws;
 
   ws.onmessage = (message) => {
@@ -16,6 +20,10 @@ const connectWebSocketServer = () => {
 
 const sendMessage = () => {
   socket.value.send(JSON.stringify(message.value))
+}
+
+const login = async () => {
+  await  axios.post("http://localhost:5173/api/user/login", user.value)
 }
 
 const subscribePush = async () => {
@@ -48,7 +56,16 @@ const subscribePush = async () => {
   <button @click="connectWebSocketServer">웹 소켓 연결</button>
   <input name="message" v-model="message"/>
   <button @click="sendMessage">메시지 전송</button>
+
+  <hr>
+
   <button @click="subscribePush">알림 구독</button>
+
+  <hr>
+  <input name="email" v-model="user.email"/>
+  <input name="password" v-model="user.password"/>
+  <button @click="login">로그인</button>
+
 </template>
 
 <style scoped>
