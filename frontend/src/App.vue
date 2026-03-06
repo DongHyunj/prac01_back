@@ -1,6 +1,10 @@
 <script setup>
 import axios from "axios";
 
+const connectWebSocketServer = () => {
+  const ws = new WebSocket("ws://localhost:8080/ws")
+}
+
 const subscribePush = async () => {
   const permission = await Notification.requestPermission()
   if(permission !== 'granted') {
@@ -28,6 +32,7 @@ const subscribePush = async () => {
 </script>
 
 <template>
+  <button @click="connectWebSocketServer">웹 소켓 연결</button>
   <button @click="subscribePush">알림 구독</button>
 </template>
 
