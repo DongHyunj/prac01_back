@@ -52,20 +52,23 @@ public class SecurityConfig {
     private final OAuth2UserService oAuth2UserService;
     private final OAuth2AuthenticationSuccessHandler oAuth2AuthenticationSuccessHandler;
     private final OAuth2AuthorizationRequestRepository oAuth2AuthorizationRequestRepository;
-
     @Bean
     public SecurityFilterChain configure(HttpSecurity http) throws Exception {
-        http.sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS));
+        http.sessionManagement(session ->
+                session.sessionCreationPolicy(SessionCreationPolicy.STATELESS));
 
         http.oauth2Login(config -> {
-            config.authorizationEndpoint(
-                    endpoint -> endpoint.authorizationRequestRepository(oAuth2AuthorizationRequestRepository)
+            config.authorizationEndpoint(endpoint ->
+                    endpoint.authorizationRequestRepository(oAuth2AuthorizationRequestRepository)
             );
             config.userInfoEndpoint(
-                    endpoint -> endpoint.userService(oAuth2UserService)
+                    endpoint ->
+                            endpoint.userService(oAuth2UserService)
             );
             config.successHandler(oAuth2AuthenticationSuccessHandler);
         });
+
+        http.cors(cors -> cors.configurationSource(corsConfigurationSource()));
 
         http.authorizeHttpRequests(
                 (auth) -> auth
@@ -82,6 +85,19 @@ public class SecurityConfig {
         http.addFilterBefore(jwtFilter, UsernamePasswordAuthenticationFilter.class);
 
         return http.build();
+    }
+
+    @Bean
+    public CorsConfigurationSource corsConfigurationSource() {
+        CorsConfiguration configuration = new CorsConfiguration();
+        configuration.setAllowCredentials(true);
+        configuration.setAllowedOrigins(List.of("http://localhost:5173"));
+        configuration.setAllowedMethods(List.of("GET", "POST", "PUT", "DELETE", "OPTIONS"));
+        configuration.setAllowedHeaders(List.of("*"));
+
+        UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
+        source.registerCorsConfiguration("/**", configuration); // 모든 경로에 대해 CORS 적용
+        return source;
     }
 
     @Bean
