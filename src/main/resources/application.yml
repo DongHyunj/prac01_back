@@ -1,5 +1,3 @@
-
-
 jwt:
   secret: ${JWT_SECRET}
   expire: ${JWT_EXPIRE}
@@ -11,15 +9,40 @@ project:
     key: aesscretkey012345678901234567890
 
 spring:
+  application:
+    name: backend
+
+  # 1. 데이터베이스 설정 (수정됨)
   datasource:
-    master:
-      username: ${MASTER_DB_USERNAME}
-      password: ${MASTER_DB_PASSWORD}
-      jdbc-url: ${MASTER_DB_URL}
-    slave:
-      username: ${SLAVE_DB_USERNAME}
-      password: ${SLAVE_DB_PASSWORD}
-      jdbc-url: ${SLAVE_DB_URL}
+    driver-class-name: org.mariadb.jdbc.Driver
+    url: ${DB_URL}
+    username: ${DB_USERNAME}
+    password: ${DB_PASSWORD}
+
+  # 2. AWS 설정 (정상 위치)
+  cloud:
+    aws:
+      credentials:
+        access-key: ${AWS_ACCESS_KEY}
+        secret-key: ${AWS_SECRET_KEY}
+      s3:
+        bucket: be24-tim
+      region:
+        static: ap-northeast-2
+      stack:
+        auto: false # 로컬 실행 시 CloudFormation 감지 에러 방지용
+
+  # 3. JPA 설정 (중복 제거)
+  jpa:
+    database-platform: org.hibernate.dialect.MariaDBDialect
+    hibernate:
+      ddl-auto: update
+    properties:
+      hibernate:
+        format_sql: true
+        show_sql: true # SQL 콘솔 출력
+
+  # 4. OAuth2 & Mail (기존과 동일)
   security:
     oauth2:
       client:
@@ -27,7 +50,6 @@ spring:
           kakao:
             client-id: ${KAKAO_CLIENT_ID}
             client-secret: ${KAKAO_CLIENT_SECRET}
-            client-name: kakao
             redirect-uri: ${KAKAO_REDIRECT_URI}
             authorization-grant-type: authorization_code
             scope: profile_nickname
@@ -35,16 +57,13 @@ spring:
           google:
             client-id: ${GOOGLE_CLIENT_ID}
             client-secret: ${GOOGLE_CLIENT_SECRET}
-            scope:
-              - email
-              - profile
+            scope: [email, profile]
           naver:
             client-id: ${NAVER_CLIENT_ID}
             client-secret: ${NAVER_CLIENT_SECRET}
-            client-name: naver
             redirect-uri: ${NAVER_REDIRECT_URI}
             authorization-grant-type: authorization_code
-            scope: name, email
+            scope: [name, email]
         provider:
           naver:
             authorization-uri: https://nid.naver.com/oauth2.0/authorize
@@ -56,44 +75,24 @@ spring:
             token-uri: https://kauth.kakao.com/oauth/token
             user-info-uri: https://kapi.kakao.com/v2/user/me
             user-name-attribute: id
-  application:
-    name: backend
-  cloud:
-    aws:
 
-  jpa:
-    database-platform: org.hibernate.dialect.MariaDBDialect
-    hibernate:
-      ddl-auto: update
-    properties:
-      hibernate:
-        format_sql: true
-      credentials:
-        access-key: ${AWS_ACCESS_KEY}
-        secret-key: ${AWS_SECRET_KEY}
-      s3:
-        bucket: be24-tim
-      region:
-        static: ap-northeast-2
   mail:
     host: smtp.gmail.com
     port: 587
     username: ${MAIL_USERNAME}
     password: ${MAIL_PASSWORD}
     properties:
-      mail:
-        smtp:
-          starttls:
-            enable: true
-            required: true
-          auth: true
-          timeout: 5000
-
+      mail.smtp:
+        starttls.enable: true
+        starttls.required: true
+        auth: true
+        timeout: 5000
 
 logging:
   level:
     com.example.demo: debug
     org.hibernate.SQL: debug
     org.hibernate.orm.jdbc.bind: trace
+
 server:
   port: 8083
