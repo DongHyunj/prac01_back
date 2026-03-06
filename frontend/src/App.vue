@@ -22,7 +22,7 @@ const subscribePush = async () => {
 
     console.log(JSON.stringify(subscription))
 
-    await axios.put('http://localhost:8083/push/sub', subscription);
+    await axios.post('http://localhost:8080/push/sub', subscription);
   }
 }
 </script>
