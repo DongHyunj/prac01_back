@@ -39,4 +39,5 @@ out/
 gradlew*
 
 .env
-.log
+logs/
+*.log

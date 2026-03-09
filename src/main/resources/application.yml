@@ -8,6 +8,31 @@ project:
   aes:
     key: aesscretkey012345678901234567890
 
+management:
+  endpoints:
+    web:
+      exposure:
+        include: prometheus, metrics, health, info
+  prometheus:
+    metrics:
+      export:
+        enabled: true
+  metrics:
+    tags:
+      application: ${spring.application.name}
+  tracing:
+#    enabled: false
+    sampling:
+      probability: 1.0 # 모든 요청에 대한 데이터를 수집하겟다.
+  otlp:
+    tracing:
+      endpoint: http://10.10.10.40:4318/v1/traces
+receivers:
+  otlp:
+    protocols:
+      http:
+        endpoint: 0.0.0.0:4318
+
 spring:
   application:
     name: backend

@@ -2,6 +2,7 @@ package com.example.demo.board;
 
 import com.example.demo.common.model.BaseResponse;
 import com.example.demo.user.model.AuthUserDetails;
+import io.micrometer.observation.annotation.Observed;
 import lombok.RequiredArgsConstructor;
 import com.example.demo.board.model.BoardDto;
 import org.springframework.data.domain.Page;
