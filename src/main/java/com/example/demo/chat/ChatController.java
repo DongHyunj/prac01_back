@@ -7,6 +7,8 @@ import org.springframework.messaging.handler.annotation.SendTo;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.stereotype.Controller;
 
+import java.util.Map;
+
 @Controller
 @RequiredArgsConstructor
 public class ChatController {
@@ -28,5 +30,13 @@ public class ChatController {
     @MessageMapping("/chat/{roomIdx}")
     public void sendChatMessage(@DestinationVariable Long roomIdx, String message) {
         simpMessagingTemplate.convertAndSend("/topic/" + roomIdx, message);
+    }
+
+    @MessageMapping("/webrtc")
+    @SendTo("/topic/webrtc")
+    public Map<String, Object> webrtc(Map<String, Object> message) {
+        System.out.println("webrtc");
+        System.out.println(message.get("type"));
+        return message;
     }
 }
