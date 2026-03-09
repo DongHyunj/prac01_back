@@ -20,15 +20,15 @@ public class WebSocketConfig implements WebSocketMessageBrokerConfigurer {
     @Override
     public void registerStompEndpoints(StompEndpointRegistry registry){
         registry.addEndpoint("/ws")
-                .setAllowedOrigins("*")
-                .addInterceptors(jwtHandshakeInterceptor);
+                .setAllowedOrigins("*");
+//                .addInterceptors(jwtHandshakeInterceptor);
 //                .withSockJS(); // 웹 브라우저에서 WS 프로토콜을 지원하지 않는 경우 WS 대신에 HTTP로 통신할 수 있게 해주는 라이브러리를 사용할 때 설정
     }
 
-    @Override
-    public void configureClientInboundChannel(ChannelRegistration registration) {
-        registration.interceptors(checkRoomAuthInterceptor);
-    }
+//    @Override
+//    public void configureClientInboundChannel(ChannelRegistration registration) {
+//        registration.interceptors(checkRoomAuthInterceptor);
+//    }
 
     @Override
     public void configureMessageBroker(MessageBrokerRegistry registry) {
