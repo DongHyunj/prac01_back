@@ -9,7 +9,19 @@ project:
     key: aesscretkey012345678901234567890
 
 management:
+  endpoints:
+    web:
+      exposure:
+        include: prometheus, metrics, health, info
+  prometheus:
+    metrics:
+      export:
+        enabled: true
+  metrics:
+    tags:
+      application: ${spring.application.name}
   tracing:
+#    enabled: false
     sampling:
       probability: 1.0 # 모든 요청에 대한 데이터를 수집하겟다.
   otlp:
