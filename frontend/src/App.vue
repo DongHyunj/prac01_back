@@ -1,5 +1,59 @@
 <script setup>
 import axios from "axios";
+import {ref} from 'vue';
+import {Client} from "@stomp/stompjs";
+
+const message = ref('');
+const roomIdx = ref(0);
+const socket = ref(null);
+const user = ref({
+  email: '',
+  password: ''
+})
+
+const connectWebSocketServer = () => {
+  const ws = new Client(
+      {brokerURL: "ws://localhost:5173/ws"}
+  )
+  socket.value = ws;
+
+  ws.onConnect = () => {
+    console.log("웹 소켓 연결 성공")
+
+    ws.subscribe('/topic/test', (message) => {
+      console.log(message);
+    })
+  }
+
+  ws.activate()
+
+  // 그냥 websocket으로 연결했을 대 메시지 받는 코드
+  // ws.onmessage = (message) => {
+  //   console.log(message.data)
+  // }
+}
+
+const sendMessage = () => {
+  // socket.value.publish({
+  //   destination: '/app/test',
+  //   body: JSON.stringify(message.value)
+  // })
+  socket.value.publish({
+    destination: '/app/chat/' + roomIdx.value,
+    body: JSON.stringify(message.value)
+  })
+}
+
+const subscribeRoom = () => {
+  socket.value.subscribe('/topic/' + roomIdx.value, (message) => {
+    console.log(message)
+  })
+
+}
+
+const login = async () => {
+  await  axios.post("http://localhost:5173/api/user/login", user.value)
+}
 
 const subscribePush = async () => {
   const permission = await Notification.requestPermission()
@@ -28,7 +82,22 @@ const subscribePush = async () => {
 </script>
 
 <template>
+  <button @click="connectWebSocketServer">웹 소켓 연결</button>
+  메시지 : <input name="message" v-model="message"/>
+  방 번호 : <input name="roomIdx" v-model="roomIdx"/>
+  <button @click="sendMessage">메시지 전송</button>
+
+  <hr>
+  구독할 방 번호 : <input name="roomIdx" v-model="roomIdx"/>
+  <button @click="subscribeRoom">구독</button>
+
   <button @click="subscribePush">알림 구독</button>
+
+  <hr>
+  <input name="email" v-model="user.email"/>
+  <input name="password" v-model="user.password"/>
+  <button @click="login">로그인</button>
+
 </template>
 
 <style scoped>
