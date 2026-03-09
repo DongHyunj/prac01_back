@@ -1,10 +1,13 @@
 package com.example.demo.aop;
 
+import io.micrometer.observation.annotation.Observed;
+import io.opentelemetry.api.trace.Span;
+import io.opentelemetry.api.trace.Tracer;
+import io.opentelemetry.context.Scope;
+import lombok.RequiredArgsConstructor;
 import org.aspectj.lang.JoinPoint;
-import org.aspectj.lang.annotation.After;
-import org.aspectj.lang.annotation.Aspect;
-import org.aspectj.lang.annotation.Before;
-import org.aspectj.lang.annotation.Pointcut;
+import org.aspectj.lang.ProceedingJoinPoint;
+import org.aspectj.lang.annotation.*;
 import org.aspectj.lang.reflect.MethodSignature;
 import org.springframework.stereotype.Component;
 
@@ -12,7 +15,10 @@ import java.lang.reflect.Method;
 
 @Aspect // 관점 : 흩어진 관심사를 하나로 묶은 것
 @Component
+@RequiredArgsConstructor
+//@Observed
 public class SimpleAop {
+    private final Tracer tracer;
 
     // 실행될 위치나 시점을 지정
     //      * : 리턴 타입
@@ -20,6 +26,23 @@ public class SimpleAop {
     //      *.*(..) : 모든 클래스의 모든 메서드 및 모든 매개변수
     @Pointcut("execution(* com.example.demo.board..*.*(..) )") // 위치를 지정했음
     private void cut() { // 포인트 컷을 적용할 이름을 설정
+    }
+
+    @Around("cut()")
+    public Object traceMethod(ProceedingJoinPoint joinPoint) throws Throwable {
+        String methodName = joinPoint.getSignature().getName();
+        String className = joinPoint.getSignature().getDeclaringType().getSimpleName();
+
+        Span span = tracer.spanBuilder(className + "." + methodName).startSpan();
+        try (Scope scope = span.makeCurrent()){
+            span.setAttribute("method.name", methodName);
+            return  joinPoint.proceed();
+        } catch (Exception e) {
+            span.recordException(e);
+            throw e;
+        } finally {
+            span.end();
+        }
     }
 
 //    @Before("execution(* com.example.demo.board..*.*(..) )") // PointCut을 안 만들어두면 이렇게 설정해야 한다.
