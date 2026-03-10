@@ -99,7 +99,7 @@ public class BoardDto {
                     .contents(entity.getContents())
                     .userName(entity.getUser().getName())
                     .replyList(entity.getReplyList().stream().map(ReplyDto.ReadRes::from).toList())
-                    .likeCount(entity.getLikesList().size())
+                    .likeCount(entity.getLikesCount())
                     .build();
         }
     }

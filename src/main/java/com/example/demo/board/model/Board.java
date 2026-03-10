@@ -32,11 +32,17 @@ public class Board extends BaseEntity {
     @OneToMany(mappedBy = "board")
     private List<Reply> replyList;
 
+    private int likesCount;
+
     @OneToMany(mappedBy = "board")
     private List<Likes> likesList;
 
     public void update(BoardDto.RegReq dto) {
         this.title = dto.getTitle();
         this.contents = dto.getContents();
+    }
+
+    public void increaseLikesCount() {
+        this.likesCount++;
     }
 }
