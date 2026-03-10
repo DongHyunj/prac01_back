@@ -92,13 +92,13 @@ public class BoardDto {
         private List<ReplyDto.ReadRes> replyList;
         private int likeCount;
 
-        public static ReadRes from(Board entity) {
+        public static ReadRes from(Board entity, List<Reply> repList) {
             return ReadRes.builder()
                     .idx(entity.getIdx())
                     .title(entity.getTitle())
                     .contents(entity.getContents())
                     .userName(entity.getUser().getName())
-                    .replyList(entity.getReplyList().stream().map(ReplyDto.ReadRes::from).toList())
+                    .replyList(repList.stream().map(ReplyDto.ReadRes::from).toList())
                     .likeCount(entity.getLikesCount())
                     .build();
         }

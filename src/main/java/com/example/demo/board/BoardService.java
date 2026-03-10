@@ -1,10 +1,13 @@
 package com.example.demo.board;
 
 import com.example.demo.board.model.Board;
+import com.example.demo.reply.ReplyRepository;
+import com.example.demo.reply.model.Reply;
 import lombok.RequiredArgsConstructor;
 import com.example.demo.board.model.BoardDto;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Slice;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -15,6 +18,7 @@ import java.util.List;
 @Service
 public class BoardService {
     private final BoardRepository boardRepository;
+    private final ReplyRepository replyRepository;
 
     public BoardDto.RegRes register(Long userIdx, BoardDto.RegReq dto) {
         Board board = dto.toEntity(userIdx);
@@ -34,10 +38,11 @@ public class BoardService {
         return BoardDto.PageRes.from(boardList);
     }
 
-    @Transactional(readOnly = true)
+//    @Transactional(readOnly = true)
     public BoardDto.ReadRes read(Long idx) {
         Board board = boardRepository.findById(idx).orElseThrow();
-        return BoardDto.ReadRes.from(board);
+        Page<Reply> replies = replyRepository.findByBoard(board, PageRequest.of(0, 4));
+        return BoardDto.ReadRes.from(board, replies.getContent());
     }
 
     public BoardDto.RegRes update(Long idx, BoardDto.RegReq dto) {
