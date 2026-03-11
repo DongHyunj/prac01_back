@@ -4,6 +4,7 @@ import com.example.demo.board.BoardRepository;
 import com.example.demo.board.model.Board;
 import com.example.demo.likes.model.Likes;
 import com.example.demo.user.model.AuthUserDetails;
+import jakarta.persistence.OptimisticLockException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Isolation;
@@ -48,16 +49,19 @@ public class LikesService {
 
     @Transactional
     public /* synchronized */void like(AuthUserDetails user, Long boardIdx) {
-        Board board = boardRepository.findById(boardIdx).orElseThrow(
-
+        Board board = boardRepository.findByIdx(boardIdx).orElseThrow(
+                () -> {
+                    System.out.println("동시성 에러");
+                    throw new OptimisticLockException();
+                }
         );
         Likes likes = Likes.builder()
                 .user(user.toEntity())
                 .board(board)
                 .build();
         likes = likesRepository.save(likes);
-//        board.increaseLikesCount();
-//        boardRepository.save(board);
-       boardRepository.increaseLikeCount(boardIdx);
+        board.increaseLikesCount();
+        boardRepository.save(board);
+//       boardRepository.increaseLikeCount(boardIdx);
     }
 }

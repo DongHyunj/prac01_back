@@ -19,8 +19,8 @@ public interface BoardRepository extends JpaRepository<Board, Long> {
     @Query("SELECT b FROM Board b WHERE b.idx = :boardIdx") // JPQL
     Optional<Board> findByIdWithLock(Long boardIdx);
 
-//    @Lock(LockModeType.OPTIMISTIC)
-//    Optional<Board> findByIdx(Long boardIdx);
+    @Lock(LockModeType.OPTIMISTIC)
+    Optional<Board> findByIdx(Long boardIdx);
 
     @Modifying(clearAutomatically = true)
     @Query("UPDATE Board b SET b.likesCount = b.likesCount + 1 WHERE b.idx = :boardIdx")
