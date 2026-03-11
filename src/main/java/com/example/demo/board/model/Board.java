@@ -35,6 +35,9 @@ public class Board extends BaseEntity {
 
     private int likesCount;
 
+    @Version
+    private Long version;
+
     @OneToMany(mappedBy = "board", fetch = FetchType.LAZY)
     List<Likes> likesList;
 
