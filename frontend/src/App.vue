@@ -1,0 +1,35 @@
+<script setup>
+import axios from 'axios'
+
+const subscribePush = async () => {
+  const permission = await Notification.requestPermission()
+  if(permission !== 'granted') {
+    console.log("권한 없음")
+
+    return
+  }
+
+  await navigator.serviceWorker.register('/service-worker.js')
+  const VAPID_PUBLIC_KEY = 'BLHgfPga02L2u89uc4xjhbUFTy_U04rQCjGq7o24oxtqfVmAPHTxOmp6xndSHZtGQpmt7gqTFdMXco2gRNP7_p8'
+
+  const registration = await navigator.serviceWorker.ready;
+  let subscription = await registration.pushManager.getSubscription()
+  if(!subscription) {
+    subscription = await registration.pushManager.subscribe({
+      userVisibleOnly: true,
+      applicationServerKey: VAPID_PUBLIC_KEY
+    })
+
+    console.log(JSON.stringify(subscription))
+    await axios.post('http://localhost:8080/push/sub', subscription)
+
+  }
+
+}
+</script>
+
+<template>
+  <button @click="subscribePush">알림 구독</button>
+</template>
+
+<style scoped></style>
