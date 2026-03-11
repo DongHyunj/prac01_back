@@ -42,15 +42,22 @@ public class LikesService {
     //                  데이터를 먼저 잠그고 작업 -> 충돌이 발생하지 않게 사전에 방지
     //      낙관적 락 : 최선의 상황만 생각해서 문제가 발생하지 않을수도 있지 않을까라는 가정하고 설정하는 방법
     //                  충돌이 생기면 예외를 발생 -> 해당 작업을 다시 실행
-    @Transactional(isolation = Isolation.READ_COMMITTED)
+
+    // 락을 사용하지 않고 동시성 문제
+    //
+
+    @Transactional
     public /* synchronized */void like(AuthUserDetails user, Long boardIdx) {
-        Board board = boardRepository.findById(boardIdx).orElseThrow();
+        Board board = boardRepository.findById(boardIdx).orElseThrow(
+
+        );
         Likes likes = Likes.builder()
                 .user(user.toEntity())
                 .board(board)
                 .build();
         likes = likesRepository.save(likes);
-        board.increaseLikesCount();
-        boardRepository.save(board);
+//        board.increaseLikesCount();
+//        boardRepository.save(board);
+       boardRepository.increaseLikeCount(boardIdx);
     }
 }
