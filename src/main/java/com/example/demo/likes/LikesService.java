@@ -47,6 +47,11 @@ public class LikesService {
     // 락을 사용하지 않고 동시성 문제
     //
 
+    @Retryable(
+            retryFor = OptimisticLockException.class,
+            maxAttempts = 5,
+            backoff = @Backoff(delay = 50)
+    )
     @Transactional
     public /* synchronized */void like(AuthUserDetails user, Long boardIdx) {
         Board board = boardRepository.findByIdx(boardIdx).orElseThrow(
