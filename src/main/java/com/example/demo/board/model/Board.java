@@ -9,6 +9,7 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import org.hibernate.annotations.ColumnDefault;
 import software.amazon.awssdk.annotations.NotNull;
 
 import java.util.List;
@@ -34,6 +35,14 @@ public class Board extends BaseEntity {
     List<Reply> replyList;
 
     private int likesCount;
+
+    // 기존이 수정할 때 실행되는 쿼리
+    // UPDATE board SET likes_count = 2 WHERE idx = 1;
+    // 낙관적 락으로 설정한 version과 함께 실행되는 쿼리
+    // UPDATE board SET likes_count = 2, version = version + 1 WHERE idx = 1 AND version = 1;
+    @Version
+    @ColumnDefault("0")
+    private Long version;
 
     @OneToMany(mappedBy = "board", fetch = FetchType.LAZY)
     List<Likes> likesList;
