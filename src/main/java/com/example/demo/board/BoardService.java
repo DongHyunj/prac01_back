@@ -19,6 +19,7 @@ import java.util.List;
 public class BoardService {
     private final BoardRepository boardRepository;
     private final ReplyRepository replyRepository;
+    private final BoardQueryRepository boardQueryRepository;
 
     public BoardDto.RegRes register(AuthUserDetails user, BoardDto.RegReq dto) {
 
@@ -60,6 +61,11 @@ public class BoardService {
         boardRepository.save(board);
 
         return BoardDto.RegRes.from(board);
+    }
+
+    public List<BoardDto.ListRes> search(BoardDto.SearchReq dto) {
+        List<Board> result = boardQueryRepository.search(dto);
+        return result.stream().map(BoardDto.ListRes::from).toList();
     }
 
     public void delete(Long idx) {
