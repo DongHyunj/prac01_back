@@ -62,5 +62,11 @@ public class BoardController {
         boardService.delete(idx);
         return ResponseEntity.ok(BaseResponse.success("성공"));
     }
+
+    @GetMapping("/search")
+    public ResponseEntity search(BoardDto.SearchReq dto) {
+        List<BoardDto.ListRes> result = boardService.search(dto);
+        return ResponseEntity.ok(BaseResponse.success(result));
+    }
 }
 
