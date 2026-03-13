@@ -27,6 +27,13 @@ public class BoardService {
         return BoardDto.RegRes.from(entity);
     }
 
+    public List<BoardDto.ListRes> list() {
+        List<BoardDto.ListRes>  result = boardRepository.findAllDto();
+        return result;
+//        List<Board> result = boardRepository.findAllWithReply();
+//        return result.stream().map(BoardDto.ListRes::from).toList();
+    }
+
     public BoardDto.PageRes list(int page, int size) {
         PageRequest pageRequest = PageRequest.of(page, size);
 

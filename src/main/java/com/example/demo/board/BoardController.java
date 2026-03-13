@@ -30,6 +30,12 @@ public class BoardController {
         return ResponseEntity.ok(BaseResponse.success(result));
     }
 
+    @GetMapping("/list/fetch")
+    public ResponseEntity list() {
+        List<BoardDto.ListRes> dto = boardService.list();
+        return ResponseEntity.ok(BaseResponse.success(dto));
+    }
+
 
     @GetMapping("/list")
     public ResponseEntity list(
